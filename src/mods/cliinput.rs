@@ -10,7 +10,7 @@ pub enum Command {
         #[structopt(long = "debug")]
         debug: bool,
 
-        /// Rename configuration file
+        /// Set configuration file path
         #[structopt(
             short = "c",
             long = "config",
@@ -29,7 +29,7 @@ pub enum Command {
         #[structopt(long = "debug")]
         debug: bool,
 
-        /// Rename configuration file
+        /// Set configuration file path
         #[structopt(
             short = "c",
             long = "config",
@@ -66,7 +66,7 @@ pub enum Command {
         )]
         output: PathBuf,
 
-        /// Rename configuration file
+        /// Set configuration file path
         #[structopt(
             short = "c",
             long = "config",
