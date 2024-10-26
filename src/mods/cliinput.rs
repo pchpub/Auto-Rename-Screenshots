@@ -6,7 +6,7 @@ use structopt::StructOpt;
 pub enum Command {
     /// Add a new file
     Add {
-        /// Add file_name to configuration
+        /// Activate debug mode
         #[structopt(long = "debug")]
         debug: bool,
 
