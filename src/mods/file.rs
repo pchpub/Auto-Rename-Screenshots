@@ -1,9 +1,8 @@
-use crate::{error, ok, warn};
+use crate::{ok, warn};
 use async_zip::tokio::write::ZipFileWriter;
 use async_zip::{Compression, ZipEntryBuilder};
 use std::path::{Path, PathBuf};
 use tokio::fs::read_dir;
-use tokio::io::AsyncReadExt;
 use tokio::{fs::File, io::AsyncWriteExt};
 use tokio_util::compat::TokioAsyncReadCompatExt;
 
@@ -135,7 +134,8 @@ pub async fn rename(
         match compress_type {
             Some(compress_type) => match compress_type {
                 CompressType::Zip => {
-                    error!("Rename error:", "Zip compress method not available");
+                    zip(output, &output.join("output.zip")).await?;
+                    ok!("Compressed:", "output.zip");
                 }
                 CompressType::_7Zip => {
                     let temp_dir = env::temp_dir();
@@ -185,21 +185,6 @@ async fn dirs(dir: PathBuf) -> Result<Vec<PathBuf>, PCHStdError> {
     Ok(files)
 }
 
-// //压缩单个文件
-// async fn zip_entry(
-//     input_path: &Path,
-//     file_name: &str,
-//     zip_writer: &mut ZipFileWriter<File>,
-// ) -> Result<(), PCHStdError> {
-//     let mut input_file = File::open(input_path).await?;
-//     let builder = ZipEntryBuilder::new(file_name.into(), Compression::Stored);
-//     let mut zip_entry = zip_writer.start_entry(builder).await?;
-//     let mut buffer = Vec::new();
-//     input_file.read_to_end(&mut buffer).await?;
-//     zip_entry.write_all(&buffer).await?;
-//     return Ok(());
-// }
-
 // 压缩单个文件
 async fn zip_entry(
     input_path: &Path,
@@ -246,6 +231,9 @@ async fn zip(input_path: &Path, out_path: &Path) -> Result<(), PCHStdError> {
                 .to_str()
                 .ok_or(PCHStdError::CompressionFailed)?;
             let file_name = &entry_str[(input_dir_str.len() + 1)..];
+            if file_name.ends_with(".zip") || file_name.ends_with(".7z") {
+                continue;
+            }
             zip_entry(entry_path, file_name, &mut writer).await?;
         }
     }
