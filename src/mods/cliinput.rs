@@ -4,7 +4,7 @@ use structopt::StructOpt;
 /// This is a cli program to rename screenshots
 #[derive(StructOpt, Debug)]
 pub enum Command {
-    /// Add a new file
+    /// Add file_name to configuration
     Add {
         /// Activate debug mode
         #[structopt(long = "debug")]
